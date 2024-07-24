@@ -20,7 +20,7 @@ const initialState: OrderState = {
 };
 
 interface OrderData {
-  [id: string]: number;
+  [id: string]: { quantity: number };
 }
 
 export const placeOrder = createAsyncThunk<void, Order[]>('orders/placeOrder', async (order) => {
@@ -33,7 +33,18 @@ export const placeOrder = createAsyncThunk<void, Order[]>('orders/placeOrder', a
 
 export const fetchOrders = createAsyncThunk<Order[]>('orders/fetchOrders', async () => {
   const {data} = await axiosApi.get('/orders.json');
-  return Object.entries(data).map(([id, order]) => ({id, ...order}));
+  return Object.entries(data).map(([id, order]) => ({
+    id,
+    cartItems: Object.entries(order).map(([itemId, quantity]) => ({
+      id: itemId,
+      quantity,
+    })),
+  }));
+});
+
+export const completeOrder = createAsyncThunk<void, string>('orders/completeOrder', async (orderId) => {
+  await axiosApi.delete(`/orders/${orderId}.json`);
+  return orderId;
 });
 
 export const orderSlice = createSlice({
@@ -79,13 +90,25 @@ export const orderSlice = createSlice({
       .addCase(fetchOrders.rejected, (state) => {
         state.isLoading = false;
         state.error = true;
+      })
+      .addCase(completeOrder.pending, (state) => {
+        state.isLoading = true;
+        state.error = false;
+      })
+      .addCase(completeOrder.fulfilled, (state, action: PayloadAction<string>) => {
+        state.orders = state.orders.filter((order) => order.id !== action.payload);
+        state.isLoading = false;
+      })
+      .addCase(completeOrder.rejected, (state) => {
+        state.isLoading = false;
+        state.error = true;
       });
-  },
+  }
 });
 
 export const {addToCart, removeFromCart, clearCart} = orderSlice.actions;
 
-export const selectCart = (state: RootState) => state.orders.orders;
+export const selectOrders = (state: RootState) => state.orders.orders;
 export const selectIsOrdersLoading = (state: RootState) => state.orders.isLoading;
 export const selectError = (state: RootState) => state.orders.error;
 

@@ -5,8 +5,7 @@ import {
   addToCart,
   clearCart,
   placeOrder,
-  removeFromCart,
-  selectCart,
+  removeFromCart, selectOrders,
 } from '../../store/orderSlice';
 import Spinner from '../../components/Spinner/Spinner';
 import {Button, Modal} from 'react-bootstrap';
@@ -16,7 +15,7 @@ const ClientDishList = () => {
   const dishes = useAppSelector(selectDishes);
   const isLoading = useAppSelector(selectIsDishesLoading);
   const error = useAppSelector(selectError);
-  const cart = useAppSelector(selectCart);
+  const cart = useAppSelector(selectOrders);
   const [showModal, setShowModal] = useState(false);
 
 
@@ -50,7 +49,7 @@ const ClientDishList = () => {
     };
   });
 
-  const totalAmount = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const totalAmount = cartItems.reduce((sum, item) => sum + item.price * item.quantity + 150, 0);
 
   return (
     <div>
@@ -91,6 +90,7 @@ const ClientDishList = () => {
               </li>
             ))}
           </ul>
+          <p className="mt-2">Delivery: 150 сом</p>
           <h5 className="mt-3">Total Amount: {totalAmount} сом</h5>
         </Modal.Body>
         <Modal.Footer>
