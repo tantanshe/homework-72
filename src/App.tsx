@@ -4,15 +4,17 @@ import Admin from './containers/Admin/Admin';
 import AddDish from './containers/Admin/AddDish';
 import EditDish from './containers/Admin/EditDish';
 import AdminDishes from './containers/Admin/AdminDishes';
+import ClientDishList from './containers/Client/ClientDishList';
 
 const App = () => {
   return (
     <div>
       <Routes>
+        <Route path="/" element={<ClientDishList/>}/>
         <Route path="/admin" element={<Admin/>}/>
         <Route path="/admin/dishes" element={<AdminDishes/>}/>
         <Route path="/addDish" element={<AddDish/>}/>
-        <Route path="/edit/:id"  element={<EditDish/>}/>
+        <Route path="/edit/:id" element={<EditDish/>}/>
         <Route path="*" element={<h2>Not found</h2>}/>
       </Routes>
     </div>

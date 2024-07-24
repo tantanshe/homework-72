@@ -51,12 +51,6 @@ export const orderSlice = createSlice({
     removeFromCart: (state, action: PayloadAction<string>) => {
       state.orders = state.orders.filter(item => item.id !== action.payload);
     },
-    updateCartQuantity: (state, action: PayloadAction<{ id: string, quantity: number }>) => {
-      const item = state.orders.find(item => item.id === action.payload.id);
-      if (item) {
-        item.quantity = action.payload.quantity;
-      }
-    },
     clearCart: (state) => {
       state.orders = [];
     }
@@ -89,7 +83,7 @@ export const orderSlice = createSlice({
   },
 });
 
-export const {addToCart, removeFromCart, updateCartQuantity, clearCart} = orderSlice.actions;
+export const {addToCart, removeFromCart, clearCart} = orderSlice.actions;
 
 export const selectCart = (state: RootState) => state.orders.orders;
 export const selectIsOrdersLoading = (state: RootState) => state.orders.isLoading;
